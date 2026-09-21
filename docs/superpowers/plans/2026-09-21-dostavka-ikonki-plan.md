@@ -512,11 +512,14 @@ def main():
 
     # ICO собирается из наших собственных отрисовок каждого размера,
     # а не из одной картинки, ужатой встроенным ресайзом.
-    frames = [mark.png(s).convert("RGBA") for s in ICO_SIZES]
+    # Порядок важен: Pillow отбрасывает размеры крупнее первого кадра,
+    # поэтому первым идёт самый большой.
+    largest_first = sorted(ICO_SIZES, reverse=True)
+    frames = [mark.png(s).convert("RGBA") for s in largest_first]
     frames[0].save(
         out / "favicon.ico",
         format="ICO",
-        sizes=[(s, s) for s in ICO_SIZES],
+        sizes=[(s, s) for s in largest_first],
         append_images=frames[1:],
     )
 
@@ -533,17 +536,9 @@ cd ~/Progects/dostavka-ikonki && python3 -m unittest discover -s tests -v
 
 Ожидается: все тесты OK.
 
-Если `test_ico_carries_three_frames` падает с жалобой на `append_images` — значит эта сборка Pillow не умеет добавлять кадры в ICO. Тогда заменить последние строки на:
-
-```python
-    mark.png(48).save(
-        out / "favicon.ico",
-        format="ICO",
-        sizes=[(s, s) for s in ICO_SIZES],
-    )
-```
-
-и перезапустить. Тест на три кадра должен пройти в обоих случаях.
+Проверено на этой машине: кадр 16 в готовом ICO совпадает с `mark.png(16)`
+пиксель в пиксель, то есть Pillow действительно взял наши отрисовки, а не ужал
+одну картинку сам.
 
 - [ ] **Шаг 5: Коммит**
 
