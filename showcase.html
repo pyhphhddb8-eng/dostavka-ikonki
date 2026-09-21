@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Как ссылка выглядит в чате — Прямиком</title>
+  <meta name="description" content="Карточки собраны из живых тегов трёх страниц сайта и контактный лист значка в пяти размерах.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://pyhphhddb8-eng.github.io/dostavka-ikonki/showcase.html">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#0A2A66">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<p class="disclaimer"><b>Это макет, а не снимок экрана из чата.</b> Карточки
+ниже собраны прямо сейчас из тегов живых страниц этого сайта. Показать
+настоящую переписку я не могу, а выдавать рисунок за скриншот нельзя.</p>
+
+<header class="top">
+  <a class="brand" href="index.html">
+    <img src="icons/icon-48.png" width="40" height="40" alt="">
+    <span>Прямиком</span>
+  </a>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="track.html">Отследить заказ</a>
+    <a href="promo.html">Акция</a>
+    <a href="showcase.html" aria-current="page">Как выглядит ссылка</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Как ссылка выглядит в чате</h1>
+  <p class="lead">Три страницы сайта — три разные карточки. Ни один заголовок
+  на этой странице не написан руками: всё прочитано из шапок живых страниц.</p>
+
+  <div id="warning" class="warn" hidden></div>
+  <div id="cards" class="cards-row">Читаю страницы…</div>
+
+  <h2 class="section">Что проверено прямо сейчас</h2>
+  <p class="note">Пять ошибок, которые в этой задаче делают чаще всего.
+  Каждая проверяется, а не объявляется.</p>
+  <ul id="checks" class="checks"><li>Проверяю…</li></ul>
+
+  <h2 class="section">Значок в настоящих размерах</h2>
+  <p class="note">Слева направо: 16, 32, 48, 180 и 512 пикселей. 16 — это
+  настоящий размер во вкладке браузера.</p>
+  <div class="sheet light" id="sheet-light"></div>
+  <div class="sheet dark" id="sheet-dark"></div>
+  <p class="note">На светлой вкладке знак читается силуэтом синего поля, на
+  тёмной работу берёт на себя жёлтая стрелка.</p>
+</main>
+
+<footer>
+  <p>«Прямиком» — вымышленная служба доставки. Витрина строится из живых тегов
+  страниц, поэтому разойтись с ними она не может.</p>
+</footer>
+
+<script>
+const FILES = ['index.html', 'track.html', 'promo.html'];
+const ICON_SIZES = [16, 32, 48, 180, 512];
+
+function attr(doc, selector, name) {
+  const node = doc.querySelector(selector);
+  return node ? (node.getAttribute(name) || '') : '';
+}
+
+async function readPage(file) {
+  const response = await fetch(file, { cache: 'no-store' });
+  const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+  const declared = [].slice.call(
+    doc.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"], link[rel="manifest"]')
+  ).map(function (node) { return node.getAttribute('href'); })
+   .filter(function (href) { return href && !/^https?:/.test(href); });
+  return {
+    file: file,
+    title: attr(doc, 'meta[property="og:title"]', 'content'),
+    description: attr(doc, 'meta[property="og:description"]', 'content'),
+    image: attr(doc, 'meta[property="og:image"]', 'content'),
+    siteName: attr(doc, 'meta[property="og:site_name"]', 'content'),
+    canonical: attr(doc, 'link[rel="canonical"]', 'href'),
+    declared: declared
+  };
+}
+
+function sameOrigin(url) {
+  try { return new URL(url, location.href).origin === location.origin; }
+  catch (e) { return false; }
+}
+
+function localCopy(url) {
+  const at = url.indexOf('/icons/');
+  return at < 0 ? url : url.slice(at + 1);
+}
+
+function host(url) {
+  try { return new URL(url, location.href).host; } catch (e) { return '—'; }
+}
+
+function drawCards(list, offSite) {
+  const box = document.getElementById('cards');
+  box.innerHTML = '';
+  list.forEach(function (page) {
+    const card = document.createElement('article');
+    card.className = 'chat-card';
+    card.innerHTML =
+      '<div class="chat-image"><img alt="" loading="lazy"></div>' +
+      '<div class="chat-text">' +
+      '<div class="chat-site"></div>' +
+      '<div class="chat-title"></div>' +
+      '<div class="chat-desc"></div>' +
+      '<div class="chat-host"></div>' +
+      '</div>';
+    card.querySelector('img').src = offSite ? localCopy(page.image) : page.image;
+    card.querySelector('.chat-site').textContent = page.siteName;
+    card.querySelector('.chat-title').textContent = page.title;
+    card.querySelector('.chat-desc').textContent = page.description;
+    card.querySelector('.chat-host').textContent = host(page.canonical);
+    box.appendChild(card);
+  });
+}
+
+function loads(url) {
+  return new Promise(function (resolve) {
+    const probe = new Image();
+    probe.onload = function () { resolve(true); };
+    probe.onerror = function () { resolve(false); };
+    probe.src = url;
+  });
+}
+
+async function missingDeclaredFiles(list) {
+  const missing = [];
+  for (const page of list) {
+    for (const href of page.declared) {
+      const response = await fetch(href, { cache: 'no-store' });
+      if (!response.ok) { missing.push(page.file + ' → ' + href); }
+    }
+  }
+  return missing;
+}
+
+function channel(value) {
+  const c = value / 255;
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
+function luminance(hex) {
+  const h = hex.trim().replace('#', '');
+  const parts = [0, 2, 4].map(function (i) { return parseInt(h.slice(i, i + 2), 16); });
+  return 0.2126 * channel(parts[0]) + 0.7152 * channel(parts[1]) + 0.0722 * channel(parts[2]);
+}
+
+function contrast(a, b) {
+  const la = luminance(a), lb = luminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
+
+function row(ok, text) {
+  const li = document.createElement('li');
+  li.className = ok ? 'ok' : 'bad';
+  li.textContent = (ok ? '✓ ' : '✗ ') + text;
+  return li;
+}
+
+function unique(values) {
+  const filled = values.filter(Boolean);
+  return new Set(filled).size === filled.length && filled.length === values.length;
+}
+
+async function drawChecks(list) {
+  const box = document.getElementById('checks');
+  box.innerHTML = '';
+
+  const absolute = list.every(function (p) { return /^https:\/\//.test(p.image); });
+  const loaded = absolute
+    ? (await Promise.all(list.map(function (p) { return loads(p.image); }))).every(Boolean)
+    : false;
+  let firstRow;
+  if (!absolute) {
+    firstRow = 'Адрес картинки превью относительный — мессенджер не подставит домен';
+  } else if (!loaded) {
+    firstRow = 'Адрес картинки превью абсолютный, но картинка по нему пока не' +
+      ' открывается: сайт ещё не выложен по этому адресу';
+  } else {
+    firstRow = 'Адрес картинки превью абсолютный и картинка по нему открывается';
+  }
+  box.appendChild(row(absolute && loaded, firstRow));
+
+  const missing = await missingDeclaredFiles(list);
+  box.appendChild(row(missing.length === 0,
+    missing.length === 0
+      ? 'Каждый объявленный в шапке файл существует'
+      : 'Объявлено, но не найдено: ' + missing.join(', ')));
+
+  box.appendChild(row(list.every(function (p) {
+    return p.siteName && p.title && p.siteName.toLowerCase() !== p.title.toLowerCase();
+  }), 'Название сайта не повторяет заголовок страницы'));
+
+  box.appendChild(row(
+    unique(list.map(function (p) { return p.title; })) &&
+    unique(list.map(function (p) { return p.description; })) &&
+    unique(list.map(function (p) { return p.image; })) &&
+    unique(list.map(function (p) { return p.canonical; })),
+    'У каждой страницы свои заголовок, описание, картинка и canonical'));
+
+  const style = getComputedStyle(document.documentElement);
+  const ratio = contrast(style.getPropertyValue('--field'), style.getPropertyValue('--arrow'));
+  box.appendChild(row(ratio >= 4.5,
+    'Контраст пары цветов знака ' + ratio.toFixed(2) + ':1 при пороге 4.5:1'));
+}
+
+function drawSheets() {
+  ['sheet-light', 'sheet-dark'].forEach(function (id) {
+    const box = document.getElementById(id);
+    box.innerHTML = '';
+    ICON_SIZES.forEach(function (size) {
+      const wrap = document.createElement('figure');
+      const img = document.createElement('img');
+      img.src = 'icons/icon-' + size + '.png';
+      img.width = size;
+      img.height = size;
+      img.alt = 'Значок ' + size + ' пикселей';
+      const caption = document.createElement('figcaption');
+      caption.textContent = size + ' px';
+      wrap.appendChild(img);
+      wrap.appendChild(caption);
+      box.appendChild(wrap);
+    });
+  });
+}
+
+(async function () {
+  drawSheets();
+  try {
+    const list = [];
+    for (const file of FILES) { list.push(await readPage(file)); }
+    const offSite = list.some(function (p) { return p.image && !sameOrigin(p.image); });
+    if (offSite) {
+      const warn = document.getElementById('warning');
+      warn.hidden = false;
+      warn.textContent = 'Сайт открыт не по рабочему адресу, поэтому в карточках' +
+        ' показаны местные копии картинок. Проверка ниже всё равно идёт по тем' +
+        ' абсолютным адресам, что стоят в шапках страниц.';
+    }
+    drawCards(list, offSite);
+    await drawChecks(list);
+  } catch (error) {
+    document.getElementById('cards').textContent =
+      'Не удалось прочитать страницы: ' + error.message +
+      '. Витрина работает только по адресу http://, а не при открытии файла с диска.';
+  }
+})();
+</script>
+</body>
+</html>

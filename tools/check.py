@@ -16,6 +16,7 @@ from PIL import Image
 from tools import build_og, mark, pages
 
 ICON_RELS = ("icon", "shortcut icon", "apple-touch-icon", "manifest")
+EXTRA_PAGES = ("showcase.html",)
 AGENT = "dostavka-ikonki-check/1.0"
 
 
@@ -187,6 +188,8 @@ def check_files(root=None):
     problems.extend(_check_manifest(root))
     problems.extend(_check_robots(root))
     problems.extend(_check_icon_names(root))
+    problems.extend(_check_colours(root))
+    problems.extend(_check_extra_pages(root))
     return problems
 
 
@@ -244,6 +247,41 @@ def _check_icon_names(root):
         if (width, height) != (promised, promised):
             problems.append("icons/%s внутри %dx%d, а имя обещает %d"
                             % (path.name, width, height, promised))
+    return problems
+
+
+def _check_colours(root):
+    """Цвета знака живут в mark.py, а витрина считает контраст по переменным
+    из styles.css. Если они разойдутся, витрина покажет неправду."""
+    path = root / "styles.css"
+    if not path.exists():
+        return ["styles.css: файла нет"]
+    text = path.read_text(encoding="utf-8")
+    problems = []
+    for name, expected in (("--field", mark.FIELD), ("--arrow", mark.ARROW)):
+        if "%s: %s;" % (name, expected) not in text:
+            problems.append("styles.css: переменная %s разошлась с mark.py "
+                            "(ожидается %s)" % (name, expected))
+    return problems
+
+
+def _check_extra_pages(root):
+    """Витрина не описана в content/pages.tsv, но она такая же страница
+    сайта, и объявленные в её шапке файлы обязаны существовать."""
+    problems = []
+    for name in EXTRA_PAGES:
+        path = root / name
+        if not path.exists():
+            continue
+        head = parse_head(path.read_text(encoding="utf-8"))
+        if "noindex" not in (meta_value(head, "robots") or ""):
+            problems.append("%s: нет noindex" % name)
+        for href, sizes in _declared_files(head):
+            if not (root / href).exists():
+                problems.append("%s: в шапке объявлен %s, а по этому адресу "
+                                "ничего нет" % (name, href))
+            else:
+                _check_png_side(root, href, sizes, name, problems.append)
     return problems
 
 

@@ -113,5 +113,21 @@ class TestOtherTraps(CheckCase):
         self.assertComplains("icon-512.png")
 
 
+class TestShowcase(CheckCase):
+    def test_витрина_тоже_закрыта_от_поисковиков(self):
+        p = self.tmp / "showcase.html"
+        text = p.read_text(encoding="utf-8")
+        p.write_text(text.replace('content="noindex, nofollow"', 'content="all"'),
+                     encoding="utf-8")
+        self.assertComplains("showcase.html: нет noindex")
+
+    def test_цвета_в_css_не_должны_расходиться_с_mark(self):
+        p = self.tmp / "styles.css"
+        text = p.read_text(encoding="utf-8")
+        p.write_text(text.replace("--field: #0A2A66;", "--field: #123456;"),
+                     encoding="utf-8")
+        self.assertComplains("--field")
+
+
 if __name__ == "__main__":
     unittest.main()
