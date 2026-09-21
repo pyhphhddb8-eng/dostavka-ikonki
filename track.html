@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<!-- head:begin -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Где сейчас мой заказ — Прямиком</title>
+  <meta name="description" content="Введите номер накладной и посмотрите, на каком этапе посылка и во сколько её ждать сегодня.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://pyhphhddb8-eng.github.io/dostavka-ikonki/track.html">
+
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#0A2A66">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Прямиком">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:title" content="Где сейчас мой заказ">
+  <meta property="og:description" content="Введите номер накладной и посмотрите, на каком этапе посылка и во сколько её ждать сегодня.">
+  <meta property="og:url" content="https://pyhphhddb8-eng.github.io/dostavka-ikonki/track.html">
+  <meta property="og:image" content="https://pyhphhddb8-eng.github.io/dostavka-ikonki/icons/og/track.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="Отследить заказ">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Где сейчас мой заказ">
+  <meta name="twitter:description" content="Введите номер накладной и посмотрите, на каком этапе посылка и во сколько её ждать сегодня.">
+  <meta name="twitter:image" content="https://pyhphhddb8-eng.github.io/dostavka-ikonki/icons/og/track.png">
+
+  <link rel="stylesheet" href="styles.css">
+<!-- head:end -->
+</head>
+<body>
+<p class="disclaimer">Демонстрационная работа. Отслеживание ненастоящее: номер
+можно ввести любой, состояние показывается заранее заданное. Данные никуда
+не отправляются и нигде не сохраняются.</p>
+
+<header class="top">
+  <a class="brand" href="index.html">
+    <img src="icons/icon-48.png" width="40" height="40" alt="">
+    <span>Прямиком</span>
+  </a>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="track.html" aria-current="page">Отследить заказ</a>
+    <a href="promo.html">Акция</a>
+    <a href="showcase.html">Как выглядит ссылка</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Где сейчас мой заказ</h1>
+  <p class="lead">Введите номер накладной и посмотрите, на каком этапе посылка
+  и во сколько её ждать сегодня.</p>
+
+  <div class="track">
+    <label for="code">Номер накладной</label>
+    <input id="code" type="text" inputmode="numeric" placeholder="например, 4417"
+           autocomplete="off">
+    <button id="go" type="button">Показать</button>
+  </div>
+
+  <ol class="steps" id="steps" hidden>
+    <li class="done">Заявка принята — 10:05</li>
+    <li class="done">Курьер забрал отправление — 10:38</li>
+    <li class="now">В пути по городу — сейчас</li>
+    <li>Вручено получателю — ожидается к 11:35</li>
+  </ol>
+
+  <p class="note" id="hint">Состояние показывается одно и то же для любого
+  номера: это демонстрация, а не работающая служба.</p>
+</main>
+
+<footer>
+  <p>«Прямиком» — вымышленная служба доставки.</p>
+  <p><a href="showcase.html">Посмотреть, как ссылка разворачивается в чате</a></p>
+</footer>
+
+<script>
+  document.getElementById('go').addEventListener('click', function () {
+    document.getElementById('steps').hidden = false;
+  });
+</script>
+</body>
+</html>

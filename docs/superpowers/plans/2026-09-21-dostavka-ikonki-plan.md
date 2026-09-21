@@ -1182,9 +1182,17 @@ class TestHeadHtml(unittest.TestCase):
             self.assertIn('property="og:image:height" content="630"', head, slug)
 
     def test_no_external_requests(self):
+        # canonical и og:image обязаны быть абсолютными, это не «наружу».
+        # А вот загружаемое — стили, значки, манифест — должно лежать рядом,
+        # иначе страница пойдёт в чужую сеть за файлом.
         for slug, head in self.heads.items():
-            external = re.findall(r'(?:href|src)="(https?://[^"]+)"', head)
-            self.assertEqual(external, [], "%s ходит наружу: %s" % (slug, external))
+            for line in head.splitlines():
+                if "<link" not in line or 'rel="canonical"' in line:
+                    continue
+                found = re.search(r'href="([^"]+)"', line)
+                self.assertIsNotNone(found, line)
+                self.assertFalse(found.group(1).startswith("http"),
+                                 "%s грузит файл со стороны: %s" % (slug, line.strip()))
 
 
 class TestBuiltPages(unittest.TestCase):

@@ -1,0 +1,137 @@
+@font-face {
+  font-family: "PT Sans Local";
+  src: url("fonts/ptsans-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PT Sans Local";
+  src: url("fonts/ptsans-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --field: #0A2A66;
+  --arrow: #FFC61A;
+  --ink: #12203a;
+  --muted: #5b6b88;
+  --line: #dde3ee;
+  --paper: #ffffff;
+  --shade: #f4f6fb;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: "PT Sans Local", system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.disclaimer {
+  margin: 0;
+  padding: 10px 16px;
+  background: #fff5d6;
+  border-bottom: 1px solid #efd98a;
+  font-size: 14px;
+  color: #6a5312;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--field);
+  text-decoration: none;
+}
+
+.top nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.top nav a { color: var(--muted); text-decoration: none; }
+.top nav a:hover { color: var(--field); text-decoration: underline; }
+.top nav a[aria-current="page"] { color: var(--field); font-weight: 700; }
+
+main { max-width: 860px; margin: 0 auto; padding: 28px 16px 8px; }
+
+h1 { font-size: 34px; line-height: 1.2; margin: 8px 0 12px; color: var(--field); }
+h2 { font-size: 19px; margin: 0 0 6px; }
+
+.lead { font-size: 19px; color: var(--muted); margin: 0 0 28px; }
+
+.cards {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.cards li {
+  background: var(--shade);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+}
+.cards p { margin: 0; color: var(--muted); font-size: 16px; }
+
+.note { color: var(--muted); font-size: 15px; }
+
+.track { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px; }
+.track label { width: 100%; font-weight: 700; }
+.track input {
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: 11px 13px;
+  font: inherit;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.track button {
+  padding: 11px 20px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--field);
+  background: var(--arrow);
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.track button:hover { filter: brightness(0.94); }
+
+.steps { margin: 0 0 20px; padding-left: 22px; }
+.steps li { margin-bottom: 6px; color: var(--muted); }
+.steps li.done { color: var(--ink); }
+.steps li.now { color: var(--field); font-weight: 700; }
+
+footer {
+  max-width: 860px;
+  margin: 24px auto 0;
+  padding: 18px 16px 40px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 15px;
+}
+footer a { color: var(--field); }
+
+@media (max-width: 420px) {
+  h1 { font-size: 27px; }
+  .lead { font-size: 17px; }
+}
