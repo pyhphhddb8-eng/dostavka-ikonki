@@ -965,6 +965,10 @@ MARGIN = 84
 TEXT_WIDTH = CARD[0] - MARGIN * 2
 MUTED = "#93A9D4"
 
+# Полоса, внутри которой по центру встаёт подпись, и высота строки.
+CAPTION_BAND = (214, 528)
+LINE_HEIGHT = 98
+
 _FONTS = {}
 
 
@@ -1011,11 +1015,19 @@ def render(page):
     d.text((MARGIN + 124, 74), pages.SITE_NAME, font=font(700, 48), fill=mark.ARROW)
     d.text((MARGIN + 126, 134), "доставка по городу", font=font(400, 26), fill=MUTED)
 
-    # Подпись — главное, что видно в карточке.
-    y = 244
-    for line in wrap(page.caption, 700, 86, TEXT_WIDTH)[:3]:
+    # Подпись — главное, что видно в карточке. Блок ставится по центру
+    # свободного поля, иначе короткая подпись в одну строку виснет вверху,
+    # а под ней остаётся пустота во весь экран.
+    lines = wrap(page.caption, 700, 86, TEXT_WIDTH)[:3]
+    top, bottom = CAPTION_BAND
+    y = top + ((bottom - top) - len(lines) * LINE_HEIGHT) // 2
+
+    # Короткий жёлтый штрих над подписью — тот же акцент, что и полоса слева.
+    d.rectangle([MARGIN, y - 34, MARGIN + 104, y - 26], fill=mark.ARROW)
+
+    for line in lines:
         d.text((MARGIN, y), line, font=font(700, 86), fill="#FFFFFF")
-        y += 98
+        y += LINE_HEIGHT
 
     d.text(
         (MARGIN, CARD[1] - 74),
