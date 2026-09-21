@@ -16,7 +16,10 @@
 
 ## Состояние на 21.09.2026
 
-Собрано и проверено на своей машине. Готово к выкладке на GitHub Pages.
+Собрано, проверено и выложено.
+
+Сайт: https://pyhphhddb8-eng.github.io/dostavka-ikonki/
+Витрина: https://pyhphhddb8-eng.github.io/dostavka-ikonki/showcase.html
 
 ## Как собрать и проверить
 
