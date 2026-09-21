@@ -634,9 +634,14 @@ class TestSource(unittest.TestCase):
 
 
 class TestFont(unittest.TestCase):
-    def test_subset_fonts_are_built_and_small(self):
+    @classmethod
+    def setUpClass(cls):
+        # Сборка обязана пройти до любой проверки этого класса: иначе на
+        # чистой машине порядок тестов решает, упадут они или нет.
         from tools import build_font
         build_font.main()
+
+    def test_subset_fonts_are_built_and_small(self):
         for name in ("ptsans-400.woff2", "ptsans-700.woff2"):
             path = pages.ROOT / "fonts" / name
             self.assertTrue(path.exists(), "нет файла %s" % name)
